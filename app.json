@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "Islam App",
+    "slug": "islam-app",
+    "scheme": "islam-app",
+    "description": "Namaz vakitleri, kıble pusulası, ilmihal, hadis, tesbih ve daha fazlasını bir arada sunan İslami araç seti.",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/iconPack/appIcon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "buildNumber": "1",
+      "bundleIdentifier": "com.anonymous.islam-app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Konumunuzu, bulunduğunuz şehre göre namaz vakitlerini hesaplamak için kullanıyoruz.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Konumunuzu, bulunduğunuz şehre göre namaz vakitlerini hesaplamak için kullanıyoruz.",
+        "NSUserTrackingUsageDescription": "Bu uygulama, reklam ve analizler için takip izniniz olup olmadığını bilmeye ihtiyaç duymaktadır.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.tavanarasi.islamapp",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/iconPack/appIcon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/icons/iconPack/appIcon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/sounds/adhan.wav"
+          ]
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "30685d4d-2c57-4f98-87ee-48adb771a1ea"
+      }
+    }
+  }
+}
