@@ -126,17 +126,9 @@ export default function IftarSayaciPage({ onBack }) {
   }, []);
 
   return (
-    <View
-      style={[
-        styles.overlay,
-        { justifyContent: "flex-start", paddingTop: 60, paddingHorizontal: 20 },
-      ]}
-    >
+    <View style={[ styles.overlay, { justifyContent: "flex-start", paddingTop: 60, paddingHorizontal: 20 }, ]} >
       {/* Back button */}
-      <TouchableOpacity
-        onPress={onBack}
-        style={{ alignSelf: "flex-start", marginBottom: 10 }}
-      >
+      <TouchableOpacity onPress={onBack} style={{ alignSelf: "flex-start", marginBottom: 10 }} >
         <Text style={{ color: "#ffffff", fontSize: 18 }}>←</Text>
       </TouchableOpacity>
 
