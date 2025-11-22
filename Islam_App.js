@@ -177,7 +177,7 @@ export default function Islam_App() {
         setSettings(effectiveSettings);
         await requestNotificationPermissions();
         await scheduleDailyNotifications(effectiveSettings);
-        await fetchRandomVerse();
+        // await fetchRandomVerse();
         const idx = Math.floor(Math.random() * BACKGROUNDS.length);
         setBackgroundSource(BACKGROUNDS[idx]);
       } catch (e) {

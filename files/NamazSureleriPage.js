@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, ScrollView, Alert, } from "react-native";
 import { Audio } from "expo-av";
 import ScaledText from "./ScaledText";
 
@@ -240,18 +233,8 @@ ve lil-mü’minîne yevme yekûmul hisâb.`,
                     </ScaledText>
 
                     <TouchableOpacity
-                      onPress={() => handlePlayPress(item)}
-                      style={[
-                        styles.audioButton,
-                        isPlaying && styles.audioButtonActive,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.audioButtonText,
-                          isPlaying && styles.audioButtonTextActive,
-                        ]}
-                      >
+                      onPress={() => handlePlayPress(item)} style={[ styles.audioButton, isPlaying && styles.audioButtonActive, ]} >
+                      <Text style={[ styles.audioButtonText, isPlaying && styles.audioButtonTextActive, ]} >
                         {isPlaying ? "Durdur" : "Dinle"}
                       </Text>
                     </TouchableOpacity>

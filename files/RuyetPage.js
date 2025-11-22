@@ -35,8 +35,6 @@ const ruyetData = [
 ];
 
 export default function RuyetPage({ onBack }) {
-
-
     return (
       <View style={[ styles.overlay, { justifyContent: "flex-start", paddingTop: 60, paddingHorizontal: 20 }, ]} >
         {/* Back button */}
