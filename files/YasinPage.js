@@ -4,8 +4,9 @@ import { Audio } from "expo-av";
 import ScaledText from "./ScaledText";
 import { YASIN_ARABIC } from "./Yasin/YASIN_ARABIC";
 import { YASIN_TURKISH } from "./Yasin/YASIN_TURKISH";
+import { YASIN_ROMAN } from "./Yasin/YASIN_ROMAN";
 
-const YASIN_AUDIO = require("../assets/sounds/yasin.mp3"); // put your Yasin mp3 here
+const YASIN_AUDIO = require("../assets/sounds/yasin.mp3");
 
 export default function YasinPage({ onBack }) {
   const [sound, setSound] = useState(null);
@@ -111,6 +112,15 @@ export default function YasinPage({ onBack }) {
         ))}
 
         <View style={{ height: 20 }} />
+        <Text style={styles.yasinSectionTitle}> Yasin Okunuşu </Text>
+        {YASIN_ROMAN.map((line, index) => (
+          <ScaledText key={index} baseSize={14} style={styles.roman}>
+            {line}
+          </ScaledText>
+        ))}
+
+
+        <View style={{ height: 20 }} />
 
         <Text style={styles.yasinSectionTitle}>🇹🇷 Türkçe Meali</Text>
 
@@ -183,6 +193,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   turkish: {
+    color: "#ddd",
+    fontSize: 16,
+    lineHeight: 26,
+    marginBottom: 8,
+  },
+  roman: {
     color: "#ddd",
     fontSize: 16,
     lineHeight: 26,

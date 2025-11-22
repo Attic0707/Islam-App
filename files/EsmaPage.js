@@ -1,8 +1,66 @@
-import React from "react";
-import { TouchableOpacity, View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useState } from "react";
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Modal,
+} from "react-native";
 import ScaledText from "./ScaledText";
 
+const ESMA_DETAILS = {
+  "Allah": {
+    title: "Allah",
+    text:
+      "Allah, varlığı zorunlu olan, eşi ve benzeri bulunmayan tek ilahdır. " +
+      "Bütün güzel isimler O’na aittir ve diğer isimler O’nun zatî ismine bağlıdır.\n\n" +
+      "Hayata yansıması:\n" +
+      "• Mümin, her nimetin gerçek sahibinin Allah olduğunu bilir.\n" +
+      "• Dua, ibadet ve teslimiyetinde yalnız O’nu hedef alır.\n" +
+      "• Kalbinde, O’ndan başka hiçbir şeye ilahlık payı vermez.",
+  },
+  "Er-Rahmân": {
+    title: "Er-Rahmân",
+    text:
+      "Er-Rahmân, dünyada inanan–inanmayan tüm varlıklara merhamet eden, rahmetini kuşatan anlamına gelir.\n\n" +
+      "Hayata yansıması:\n" +
+      "• İnsan, Allah’ın rahmetini düşünerek ümitsizliğe kapılmaz.\n" +
+      "• Kendi hayatında da ayırım yapmadan şefkatli olmaya gayret eder.\n" +
+      "• Kalbini, katılaşmaktan ve merhametsizlikten korumaya çalışır.",
+  },
+  "Er-Rahîm": {
+    title: "Er-Rahîm",
+    text:
+      "Er-Rahîm, özellikle ahirette mümin kullarına merhamet eden, onları bağışlayan ve ikramda bulunan demektir.\n\n" +
+      "Hayata yansıması:\n" +
+      "• Kul, yaptığı iyi amellerin karşılığını Rahîm olan Rabbinden bekler.\n" +
+      "• Günah işlediğinde, pişmanlıkla O’na yönelip bağışlanma diler.\n" +
+      "• Ahiret bilincini taze tutarak yaşar.",
+  },
+  "El-Melik": {
+    title: "El-Melik",
+    text:
+      "El-Melik, mülkün ve egemenliğin gerçek sahibi olan, dilediği gibi tasarrufta bulunan demektir.\n\n" +
+      "Hayata yansıması:\n" +
+      "• İnsan, sahip olduğunu sandığı her şeyin emanet olduğunu fark eder.\n" +
+      "• Gücünü ve imkanlarını adaletten yana kullanmaya gayret eder.\n" +
+      "• Dünya mülküne aşırı bağlanmaz; asıl sahibin Allah olduğunu unutmadan yaşar.",
+  },
+  "Es-Selâm": {
+    title: "Es-Selâm",
+    text:
+      "Es-Selâm, her türlü eksiklikten uzak, kullarına gerçek güven ve esenlik veren anlamına gelir.\n\n" +
+      "Hayata yansıması:\n" +
+      "• Mümin, kalpte ve dilde selamı yaymaya çalışır.\n" +
+      "• Kendisini ve çevresini fitne ve zarardan uzak tutmaya gayret eder.\n" +
+      "• Huzur ve güvenin nihai kaynağının Allah olduğunu bilir.",
+  },
+};
+
 export default function EsmaPage({ onBack }) {
+  const [selectedName, setSelectedName] = useState(null);
+
   const NAMES = [
     { ar: "ٱللّٰه", tr: "Allah", en: "Allah", trMeaning: "Her şeyin yaratıcısı" },
     { ar: "ٱلرَّحْمَٰن", tr: "Er-Rahmân", en: "The Entirely Merciful", trMeaning: "Dünyada tüm mahlûkata merhamet eden" },
@@ -113,14 +171,14 @@ export default function EsmaPage({ onBack }) {
     { ar: "ٱلرَّشِيد", tr: "Er-Reşîd", en: "The Righteous Teacher", trMeaning: "Doğru yolu gösteren" },
     { ar: "ٱلصَّبُور", tr: "Es-Sabûr", en: "The Patient One", trMeaning: "Çok sabırlı" },
   ];
+  const closeModal = () => setSelectedName(null);
 
   return (
     <View style={styles.overlay}>
       {/* Header */}
       <View style={styles.headerRow}>
-        {/* Back button (same pattern as other pages) */}
-        <TouchableOpacity onPress={onBack} style={{ alignSelf: "flex-start", marginBottom: 10 }} >
-          <Text style={{ color: "#ffffff", fontSize: 18 }}>← </Text>
+        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <Text style={styles.backText}>← </Text>
         </TouchableOpacity>
         <Text style={styles.title}>Esmaü’l-Hüsna</Text>
       </View>
@@ -131,7 +189,12 @@ export default function EsmaPage({ onBack }) {
         showsVerticalScrollIndicator={false}
       >
         {NAMES.map((n, idx) => (
-          <View key={idx} style={styles.card}>
+          <TouchableOpacity
+            key={idx}
+            style={styles.card}
+            activeOpacity={0.85}
+            onPress={() => setSelectedName(n)}
+          >
             <Text style={styles.arabic}>{n.ar}</Text>
             <Text style={styles.name}>{n.tr}</Text>
             <ScaledText baseSize={14} style={styles.meaningEn}>
@@ -140,11 +203,53 @@ export default function EsmaPage({ onBack }) {
             <ScaledText baseSize={14} style={styles.meaningTr}>
               {n.trMeaning}
             </ScaledText>
-          </View>
+            <Text style={styles.moreHint}>Dokun ve detayları gör</Text>
+          </TouchableOpacity>
         ))}
 
         <View style={{ height: 30 }} />
       </ScrollView>
+
+      {/* MODAL */}
+      <Modal
+        visible={!!selectedName}
+        transparent
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalContainer}>
+            {selectedName && (
+              <>
+                <Text style={styles.modalArabic}>{selectedName.ar}</Text>
+                <Text style={styles.modalName}>{selectedName.tr}</Text>
+                <Text style={styles.modalEn}>{selectedName.en}</Text>
+                <Text style={styles.modalShortMeaning}>
+                  {selectedName.trMeaning}
+                </Text>
+
+                <ScrollView
+                  style={styles.modalScroll}
+                  contentContainerStyle={{ paddingBottom: 12 }}
+                >
+                  <Text style={styles.modalLongText}>
+                    {ESMA_DETAILS[selectedName.tr]?.text ??
+                      `${selectedName.tr} ismi, “${selectedName.trMeaning}” anlamını taşır. ` +
+                        "Bu isim, kulun Allah’ı bu yönüyle tanımasını, O’na bu bilinçle yönelmesini ve hayatına bu şekilde yansıtmasını hatırlatır."}
+                  </Text>
+                </ScrollView>
+
+                <TouchableOpacity
+                  onPress={closeModal}
+                  style={styles.modalCloseButton}
+                >
+                  <Text style={styles.modalCloseText}>Kapat</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -212,5 +317,79 @@ const styles = StyleSheet.create({
   meaningTr: {
     textAlign: "center",
     color: "#c0cce0",
+  },
+  moreHint: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#ffdd88",
+    textAlign: "center",
+  },
+  // MODAL
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.65)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  modalContainer: {
+    width: "100%",
+    maxHeight: "80%",
+    backgroundColor: "rgba(10, 12, 20, 0.96)",
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
+  },
+  modalArabic: {
+    fontSize: 28,
+    textAlign: "center",
+    color: "#ffdd55",
+    marginBottom: 8,
+    fontWeight: "700",
+  },
+  modalName: {
+    fontSize: 20,
+    textAlign: "center",
+    color: "#ffffff",
+    fontWeight: "700",
+  },
+  modalEn: {
+    fontSize: 14,
+    textAlign: "center",
+    color: "#d0d7e2",
+    marginTop: 2,
+    marginBottom: 6,
+  },
+  modalShortMeaning: {
+    fontSize: 14,
+    textAlign: "center",
+    color: "#c0cce0",
+    marginBottom: 10,
+  },
+  modalScroll: {
+    maxHeight: 260,
+    marginBottom: 10,
+  },
+  modalLongText: {
+    fontSize: 14,
+    color: "#f2f2f7",
+    lineHeight: 20,
+  },
+  modalCloseButton: {
+    alignSelf: "center",
+    marginTop: 4,
+    paddingHorizontal: 22,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.5)",
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  modalCloseText: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
