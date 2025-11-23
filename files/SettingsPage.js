@@ -85,6 +85,14 @@ export default function SettingsPage({ onBack, onSettingsChanged }) {
         <TouchableOpacity onPress={save} style={styles.settingsSaveBtn}>
           <Text style={styles.settingsSaveText}>Kaydet</Text>
         </TouchableOpacity>
+
+        <View style={styles.row}>
+          <Text>Reklamları Göster</Text>
+          <Switch
+            value={settings.adsEnabled}
+            onValueChange={(value) => onSettingsChanged({ ...settings, adsEnabled: value }) } />
+        </View>
+
       </View>
     );
 }

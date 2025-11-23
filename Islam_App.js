@@ -6,9 +6,10 @@ import * as Location from "expo-location";
 import TextSizeButton from "./files/TextSizeButton";
 import ScaledText from "./files/ScaledText";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useInterstitialAds } from "./files/useAds";
 
 // Google Mobile Ads
-import mobileAds, { BannerAd, BannerAdSize, TestIds, } from "react-native-google-mobile-ads";
+import mobileAds, { BannerAd, BannerAdSize, InterstitialAd, AdEventType,  TestIds, } from "react-native-google-mobile-ads";
 
 // pages
 import ImsakiyePage from "./files/ImsakiyePage";
@@ -76,9 +77,9 @@ Notifications.setNotificationHandler({
 const SIDEBAR_WIDTH = 260;
 
 // ad config
-const bannerAdUnitId = TestIds.BANNER;
-// approved olduğunda bunu geri aç
-// const bannerAdUnitId = __DEV__ ? TestIds.BANNER : Platform.select({ ios: "ca-app-pub-8919233762784771/1697907277", android: "ca-app-pub-8919233762784771/9174081776", });
+const bannerAdUnitId = __DEV__ ? TestIds.BANNER : Platform.select({ ios: "ca-app-pub-8919233762784771/1697907277", android: "ca-app-pub-8919233762784771/9174081776", });
+const interstitialAdUnitId = __DEV__ ? TestIds.INTERSTITIAL : Platform.select({ ios: "ca-app-pub-8919233762784771/2566591222", android: "ca-app-pub-8919233762784771/7773354281", });
+const interstitial = InterstitialAd.createForAdRequest(interstitialAdUnitId, { requestNonPersonalizedAdsOnly: false, });
 
 const MENU_ITEMS = [
   { key: "imsakiye", label: "İmsakiye" },
@@ -145,7 +146,7 @@ const BACKGROUNDS = [
 
 const PRAYER_MAP = { Fajr: "Sabah", Dhuhr: "Öğle", Asr: "İkindi", Maghrib: "Akşam", Isha: "Yatsı" };
 const PRAYER_NAMES = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-const defaultSettings = { soundEnabled: true, vibrationEnabled: true, darkTheme: true, notificationsEnabled: true, };
+const defaultSettings = { soundEnabled: true, vibrationEnabled: true, darkTheme: true, notificationsEnabled: true, adsEnabled: true, };
 
 export default function Islam_App() {
   const [settings, setSettings] = useState(defaultSettings);
@@ -165,6 +166,8 @@ export default function Islam_App() {
   const [isAppLibraryOpen, setIsAppLibraryOpen] = useState(false);
   const [backgroundSource, setBackgroundSource] = useState(BACKGROUNDS[0]);
   const [isRamadanNow, setIsRamadanNow] = useState(false);
+  const { adsEnabled, tryShowInterstitial, toggleAds } = useAds();
+  const { maybeShowInterstitial } = useInterstitialAds(settings.adsEnabled);
 
   // init
   useEffect(() => {
@@ -180,6 +183,7 @@ export default function Islam_App() {
             vibrationEnabled: parsed.vibrationEnabled ?? true,
             darkTheme: parsed.darkTheme ?? true,
             notificationsEnabled: parsed.notificationsEnabled ?? true,
+            adsEnabled: parsed.adsEnabled ?? true,
           };
         }
 
@@ -202,14 +206,6 @@ export default function Islam_App() {
       setIsRamadanNow(await isRamadan());
     }
     load();
-  }, []);
-
-  useEffect(() => {
-    mobileAds()
-      .initialize()
-      .then(() => {
-        if (DEBUG) console.log("Google Mobile Ads initialized");
-      });
   }, []);
 
   async function requestNotificationPermissions() {
@@ -563,6 +559,11 @@ export default function Islam_App() {
   ).current;
 
   function handleMenuItemPress(key, isLibOpened) {
+    const bigPages = [ "yasin_suresi", "islam_ilmihali", "peygamberler_tarihi", "dort_halife", "sahabelerin_hayati", "mesnevi", "islam_quiz",  "hadis_fihristi", ];
+
+    if (bigPages.includes(key)) {
+      maybeShowInterstitial();
+    }
     switch (key) {
       case "home":
         setActivePage(key);
@@ -1317,7 +1318,7 @@ export default function Islam_App() {
       {/* =======================
           BANNER AD
           ======================= */}
-      {activePage === "home" && (
+      {activePage === "home" && settings.adsEnabled && (
         <View style={styles.adContainer}>
           <BannerAd
             unitId={bannerAdUnitId}
