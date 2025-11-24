@@ -1194,77 +1194,8 @@ export default function Islam_App() {
         </View>
       )}
 
-      {/* =======================
-          BOTTOM BAR 
-        ======================= */}
-      <View style={styles.bottomBar}>
-        {/* LEFT: Shuffle + Prayer */}
-        <View style={styles.bottomSide}>
-          <TouchableOpacity
-            onPress={fetchRandomVerse}
-            style={styles.bottomIconWrapper}
-          >
-            <Image
-              source={require("./assets/icons/iconPack/shuffle_3.png")}
-              style={styles.bottomIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={displayPrayerChecklistPage}
-            style={styles.bottomIconWrapper}
-          >
-            <Image
-              source={require("./assets/icons/iconPack/namazTR.png")}
-              style={styles.bottomIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* CENTER: App Library Button */}
-        <View style={styles.bottomCenter}>
-          {shouldShowFloatingButton() && (
-            <TouchableOpacity
-              style={styles.bottomBarCenterButton}
-              onPress={toggleAppLibrary}
-              activeOpacity={0.8}
-            >
-              <Image
-                source={require("./assets/icons/iconPack/menuIcon.png")}
-                style={styles.bottomBarCenterIcon}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* RIGHT: Quran + Share */}
-        <View style={styles.bottomSide}>
-          <TouchableOpacity
-            onPress={displayQuranPage}
-            style={styles.bottomIconWrapper}
-          >
-            <Image
-              source={require("./assets/icons/iconPack/quran.png")}
-              style={styles.bottomIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={handleShare}
-            style={styles.bottomIconWrapper}
-          >
-            <Image
-              source={require("./assets/icons/iconPack/share_4.png")}
-              style={styles.bottomIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/* DockBar */}
+      <DockBar activePage={activePage} onNavigate={(key) => { setActivePage(key); }} />
 
       {/* Backdrop */}
       {isSidebarOpen && (
