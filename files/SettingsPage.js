@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View, Text, StyleSheet, Alert, Switch } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, Alert, Switch, Linking, Platform, Share } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as StoreReview from "expo-store-review";
 
 export default function SettingsPage({ onBack, onSettingsChanged }) {
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -65,6 +66,47 @@ export default function SettingsPage({ onBack, onSettingsChanged }) {
     }
   }
 
+  async function leaveReview() {
+    try {
+      if(await StoreReview.hasAction()) {
+        await StoreReview.requestReview();
+        return;
+      }
+
+      const appStoreUrl = "https://github.com/Attic0707/Islam-App";
+      // const playStoreUrl = "market://details?id=your.package.name";
+
+      const url = Platform.select( {ios: appStoreUrl, android: playStoreUrl });
+
+      if(url) {
+        Linking.openURL(url);
+      }
+    }
+    catch (e) {
+      console.log("Review error:", e);
+    }
+    console.log('YORUM YAP');
+  }
+
+  async function shareTheApp() {
+    try {
+      await Share.share({
+        message:
+          "İslam Yolu uygulamasını dene. Ezan vakitleri, Kur’an, ilham sayfası ve daha fazlası: APP_STORE_LINK_BURAYA",
+      });
+    } catch (e) {
+      console.log("Share error:", e);
+    }
+  }
+
+  function goPremium() {
+    console.log('GO PREMIUM');
+  }
+
+  function updateTheApp() {
+    console.log('UPDATE');
+  }
+
   return (
     <View style={[styles.overlay, { justifyContent: "flex-start", paddingTop: 60, paddingHorizontal: 20 }]}>
       <TouchableOpacity onPress={onBack} style={{ alignSelf: "flex-start", marginBottom: 10 }} >
@@ -91,6 +133,32 @@ export default function SettingsPage({ onBack, onSettingsChanged }) {
       <View style={styles.settingRow}>
         <TouchableOpacity onPress={triggerBackgroundChange} disabled={cooldown}>
           <Text style={[styles.settingLabel, cooldown && { opacity: 0.5 }]}>Arka Plan Değiştir</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.settingRow}>
+        <TouchableOpacity onPress={leaveReview} disabled={cooldown}>
+          <Text style={[styles.settingLabel, cooldown && { opacity: 0.5 }]}> Uygulamaya paun ver </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.settingRow}>
+        <TouchableOpacity onPress={shareTheApp} disabled={cooldown}>
+          <Text style={[styles.settingLabel, cooldown && { opacity: 0.5 }]}> İslam Yolu'nu Paylaş </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/*
+      <View style={styles.settingRow}>
+        <TouchableOpacity onPress={goPremium} disabled={cooldown} style={styles.button}>
+          <Text style={[styles.settingLabel, cooldown && { opacity: 0.5 }]}> İslam Yolu PRO'ya geç </Text>
+        </TouchableOpacity>
+      </View>
+      */}
+
+      <View style={styles.settingRow}>
+        <TouchableOpacity onPress={updateTheApp} disabled={cooldown}>
+          <Text style={[styles.settingLabel, cooldown && { opacity: 0.5 }]}> Güncellemeleri denetle </Text>
         </TouchableOpacity>
       </View>
 

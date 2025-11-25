@@ -207,14 +207,16 @@ export default function IlhamPage({ onBack }) {
             <TouchableOpacity key={story.id} style={styles.storyCard} activeOpacity={0.8} onPress={() => openStory(index)} >
               <View style={styles.storyInner}>
                 <ScaledText baseSize={12} style={styles.storyTitle}> {story.title} </ScaledText>
-                <ScaledText numberOfLines={5} baseSize={12} style={styles.storyPreview}> {story.text} </ScaledText>
+                {/* <ScaledText numberOfLines={5} baseSize={12} style={styles.storyPreview}> {story.text} </ScaledText> */}
               </View>
+              {/* 
               <View style={styles.storyFooterRow}>
                 <Text style={[styles.storyLikeIcon, liked && styles.storyLikeIconActive]}>
                   ♥
                 </Text>
                 <Text style={styles.storyShareIcon}>↗</Text>
               </View>
+              */}
             </TouchableOpacity>
           );
         })}
@@ -375,18 +377,19 @@ const styles = StyleSheet.create({
   // Stories row
   storiesRow: {
     marginTop: 6,
-    maxHeight: 160,
+    maxHeight: 120,
   },
   storyCard: {
-    width: 110,
-    height: 150,
-    borderRadius: 18,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginRight: 8,
     padding: 8,
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
-    justifyContent: "space-between",
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems:'center',
   },
   storyInner: {
   },
