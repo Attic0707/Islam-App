@@ -62,7 +62,7 @@ import AboutPage from "./files/AboutPage";
 import HelpPage from "./files/HelpPage";
 import DockBar from "./files/DockBar";
 
-const DEBUG = false;
+const DEBUG = true;
 
 // How notifications behave when the app is foregrounded
 Notifications.setNotificationHandler({
@@ -1000,26 +1000,14 @@ export default function Islam_App() {
       )}
 
       {/* Sidebar */}
-      <Animated.View
-        style={[
-          styles.sidebar,
-          { transform: [{ translateX: sidebarAnim }] },
-        ]}
-      >
+      <Animated.View style={[ styles.sidebar, { transform: [{ translateX: sidebarAnim }] }, ]} >
         <Text style={styles.sidebarTitle}>Menü</Text>
         <ScrollView>
           {MENU_ITEMS.filter((item) => {
             if (item.key === "iftarSayaci" && !isRamadanNow) return false;
             return true;
           }).map((item) => (
-            <TouchableOpacity
-              key={item.key}
-              style={styles.sidebarItem}
-              onPress={() => {
-                setActivePage(item.key);
-                closeSidebar();
-              }}
-            >
+            <TouchableOpacity key={item.key} style={styles.sidebarItem} onPress={() => { setActivePage(item.key); closeSidebar(); }} >
               <Text style={styles.sidebarItemText}>{item.label}</Text>
             </TouchableOpacity>
           ))}
@@ -1091,7 +1079,7 @@ export default function Islam_App() {
       )}
 
       {/* DockBar */}
-        <DockBar activePage={activePage} onNavigate={(key) => { setActivePage(key); }} />
+      <DockBar activePage={activePage} onNavigate={(key) => key === "appLauncher" ? toggleAppLibrary() : setActivePage(key)} />
 
       {/* Backdrop */}
       {isSidebarOpen && (
@@ -1129,25 +1117,9 @@ const styles = StyleSheet.create({
     marginRight: 300,
     gap: 24,
   },
-  topBarTitleWrapper: {
-    flex: 1,
-  },
-  topIconRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 16,
-    gap: 24,
-  },
   sidebarMenuIcom: {
     width: 25,
     height: 25,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: "left",
-    marginTop: 4,
-    color: "#d0d7e2",
   },
   sidebar: {
     position: "absolute",
@@ -1191,54 +1163,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 20,
     zIndex: 15,
-  },
-  bottomBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 0,
-    paddingVertical: 10,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    position: "relative",
-  },
-  bottomSide: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-  },
-
-  bottomCenter: {
-    position: "absolute",
-    left: "50%",
-    transform: [{ translateX: -36 }],
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  bottomIconWrapper: {
-    marginHorizontal: 4,
-  },
-
-  bottomIcon: {
-    width: 48,
-    height: 72,
-  },
-
-  bottomBarCenterButton: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "rgba(255,255,255,0.35)",
-  },
-
-  bottomBarCenterIcon: {
-    width: 40,
-    height: 40,
-    tintColor: "#fff",
   },
   appLibraryOverlay: {
     position: "absolute",
