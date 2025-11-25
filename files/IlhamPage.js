@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Modal,
-  Share,
-} from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, ScrollView, Modal, Share, } from "react-native";
 import ScaledText from "./ScaledText";
 
 const DEBUG = false;
@@ -129,10 +121,7 @@ export default function IlhamPage({ onBack }) {
   // Feed item modal state
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const filteredFeed =
-    activeCategory === "tum"
-      ? FEED_ITEMS
-      : FEED_ITEMS.filter((item) => item.category === activeCategory);
+  const filteredFeed = activeCategory === "tum" ? FEED_ITEMS : FEED_ITEMS.filter((item) => item.category === activeCategory);
 
   const leftColumn = filteredFeed.filter((_, idx) => idx % 2 === 0);
   const rightColumn = filteredFeed.filter((_, idx) => idx % 2 === 1);
@@ -172,7 +161,7 @@ export default function IlhamPage({ onBack }) {
   async function shareText(text, titlePrefix = "İlham") {
     try {
       await Share.share({
-        message: `${titlePrefix}:\n\n${text}\n\n📱 İslam App ile paylaşıldı.`,
+        message: `${titlePrefix}:\n\n${text}\n\n📱 İslam Yolu ile paylaşıldı.`,
       });
     } catch (e) {
       if (DEBUG) console.log("Share error:", e);
@@ -182,10 +171,7 @@ export default function IlhamPage({ onBack }) {
   return (
     <View style={styles.overlay}>
       {/* Back button */}
-      <TouchableOpacity
-        onPress={onBack}
-        style={{ alignSelf: "flex-start", marginBottom: 10 }}
-      >
+      <TouchableOpacity onPress={onBack} style={{ alignSelf: "flex-start", marginBottom: 10 }} >
         <Text style={{ color: "#ffffff", fontSize: 18 }}>← </Text>
       </TouchableOpacity>
 
@@ -197,27 +183,14 @@ export default function IlhamPage({ onBack }) {
       </Text>
 
       {/* TOP: Stories row */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.storiesRow}
-        contentContainerStyle={{ paddingRight: 8 }}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={ styles.storiesRow } contentContainerStyle={{ paddingRight: 8 }} >
         {STORY_ITEMS.map((story, index) => {
           const liked = likedStories[story.id];
           return (
-            <TouchableOpacity
-              key={story.id}
-              style={styles.storyCard}
-              activeOpacity={0.8}
-              onPress={() => openStory(index)}
-            >
+            <TouchableOpacity key={story.id} style={styles.storyCard} activeOpacity={0.8} onPress={() => openStory(index)} >
               <View style={styles.storyInner}>
                 <Text style={styles.storyTitle}>{story.title}</Text>
-                <Text
-                  numberOfLines={3}
-                  style={styles.storyPreview}
-                >
+                <Text numberOfLines={5} style={styles.storyPreview} >
                   {story.text}
                 </Text>
               </View>
@@ -233,26 +206,12 @@ export default function IlhamPage({ onBack }) {
       </ScrollView>
 
       {/* SECOND ROW: Categories */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoriesRow}
-        contentContainerStyle={{ paddingRight: 8 }}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={true} style={styles.categoriesRow} contentContainerStyle={{ paddingRight: 8 }} >
         {CATEGORIES.map((cat) => {
           const active = cat.key === activeCategory;
           return (
-            <TouchableOpacity
-              key={cat.key}
-              style={[styles.categoryChip, active && styles.categoryChipActive]}
-              onPress={() => setActiveCategory(cat.key)}
-            >
-              <Text
-                style={[
-                  styles.categoryChipText,
-                  active && styles.categoryChipTextActive,
-                ]}
-              >
+            <TouchableOpacity key={cat.key} style={[styles.categoryChip, active && styles.categoryChipActive]} onPress={() => setActiveCategory(cat.key)}  >
+              <Text style={[ styles.categoryChipText, active && styles.categoryChipTextActive, ]} >
                 {cat.label}
               </Text>
             </TouchableOpacity>
@@ -261,61 +220,31 @@ export default function IlhamPage({ onBack }) {
       </ScrollView>
 
       {/* MAIN: Pinterest-style feed */}
-      <ScrollView
-        style={{ flex: 1, marginTop: 8 }}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.feedContainer}
-      >
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={styles.feedContainer} >
         <View style={styles.feedColumn}>
           {leftColumn.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.feedCard}
-              activeOpacity={0.9}
-              onPress={() => setSelectedItem(item)}
-            >
+            <TouchableOpacity key={item.id} style={styles.feedCard} activeOpacity={0.9} onPress={() => setSelectedItem(item)} >
               <ScaledText baseSize={14} style={styles.feedType}>
-                {item.type === "ayet"
-                  ? "📖 Ayet"
-                  : item.type === "hadis"
-                  ? "📜 Hadis"
-                  : "✨ Söz"}
+                {item.type === "ayet" ? "📖 Ayet" : item.type === "hadis" ? "📜 Hadis"  : "✨ Söz"}
               </ScaledText>
               <ScaledText baseSize={14} style={styles.feedTitle}>
                 {item.title}
               </ScaledText>
-              {item.ref ? (
-                <ScaledText baseSize={12} style={styles.feedRef}>
-                  {item.ref}
-                </ScaledText>
-              ) : null}
+              {item.ref ? ( <ScaledText baseSize={12} style={styles.feedRef}> {item.ref} </ScaledText> ) : null}
             </TouchableOpacity>
           ))}
         </View>
 
         <View style={styles.feedColumn}>
           {rightColumn.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.feedCard}
-              activeOpacity={0.9}
-              onPress={() => setSelectedItem(item)}
-            >
+            <TouchableOpacity key={item.id} style={styles.feedCard} activeOpacity={0.9} onPress={() => setSelectedItem(item)} >
               <ScaledText baseSize={14} style={styles.feedType}>
-                {item.type === "ayet"
-                  ? "📖 Ayet"
-                  : item.type === "hadis"
-                  ? "📜 Hadis"
-                  : "✨ Söz"}
+                {item.type === "ayet" ? "📖 Ayet" : item.type === "hadis" ? "📜 Hadis" : "✨ Söz"}
               </ScaledText>
               <ScaledText baseSize={14} style={styles.feedTitle}>
                 {item.title}
               </ScaledText>
-              {item.ref ? (
-                <ScaledText baseSize={12} style={styles.feedRef}>
-                  {item.ref}
-                </ScaledText>
-              ) : null}
+              {item.ref ? ( <ScaledText baseSize={12} style={styles.feedRef}> {item.ref} </ScaledText> ) : null}
             </TouchableOpacity>
           ))}
         </View>
@@ -498,7 +427,7 @@ const styles = StyleSheet.create({
   // Stories row
   storiesRow: {
     marginTop: 6,
-    marginBottom: 8,
+    maxHeight: 160,
   },
   storyCard: {
     width: 110,
@@ -512,7 +441,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   storyInner: {
-    flex: 1,
   },
   storyTitle: {
     fontSize: 13,
@@ -527,7 +455,6 @@ const styles = StyleSheet.create({
   storyFooterRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 4,
   },
   storyLikeIcon: {
     fontSize: 15,
@@ -543,17 +470,17 @@ const styles = StyleSheet.create({
 
   // Categories
   categoriesRow: {
-    marginBottom: 4,
+    maxHeight: 40
   },
   categoryChip: {
+    maxHeight: 36,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 18,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(255, 0, 0, 0.4)",
     marginRight: 6,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
-    height:50,
   },
   categoryChipActive: {
     backgroundColor: "#ffdd55",
@@ -572,7 +499,7 @@ const styles = StyleSheet.create({
   feedContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingTop: 4,
+
   },
   feedColumn: {
     flex: 1,
