@@ -744,11 +744,20 @@ export default function IlhamPage({ onBack }) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
   }
 
-  // Swipe handler (left/right)
   const storyPanResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gesture) =>
-        Math.abs(gesture.dx) > 20 && Math.abs(gesture.dy) < 20,
+      // Don't grab on touch start
+      onStartShouldSetPanResponder: () => false,
+
+      // Let children handle start; we care about horizontal MOVE
+      onMoveShouldSetPanResponder: () => false,
+
+      // Use capture so parent can take control during move
+      onMoveShouldSetPanResponderCapture: (_, gesture) => {
+        const isHorizontal = Math.abs(gesture.dx) > 15 && Math.abs(gesture.dy) < 15;
+        return isHorizontal;
+      },
+
       onPanResponderRelease: (_, gesture) => {
         if (gesture.dx < -40) {
           // swipe left → next
@@ -758,6 +767,8 @@ export default function IlhamPage({ onBack }) {
           handlePrevStory();
         }
       },
+
+      onPanResponderTerminationRequest: () => true,
     })
   ).current;
 
@@ -848,7 +859,7 @@ export default function IlhamPage({ onBack }) {
           const bg = STORY_PICS.length > 0 ? STORY_PICS[index % STORY_PICS.length] : null;
           return (
             <TouchableOpacity key={story.id} activeOpacity={0.8} onPress={() => openStory(index)} >
-              <ImageBackground source={bg} style={styles.storyCircle} imageStyle={styles.storyCircleImage} resizeMode="cover"> <Text>.</Text> </ImageBackground>
+              <ImageBackground source={bg} style={styles.storyCircle} imageStyle={styles.storyCircleImage} resizeMode="cover"/>
             </TouchableOpacity>
           );
         })}
@@ -881,46 +892,47 @@ export default function IlhamPage({ onBack }) {
 
           {/* Actual popup card – NOT inside the background touchable */}
           <ImageBackground source={backgroundSource} style={styles.storyModalCardBackground} imageStyle={styles.storyModalCardImage} resizeMode="cover" >
+            <View style={{ flex: 1 }} {...storyPanResponder.panHandlers}>
 
-            {/* --- LEFT INVISIBLE TAP ZONE --- */}
-            {activeStoryIndex > 0 && ( <TouchableOpacity onPress={handlePrevStory} style={styles.storyLeftZone} activeOpacity={1} />  )}
+              {/* --- LEFT INVISIBLE TAP ZONE --- */}
+              {activeStoryIndex > 0 && ( <TouchableOpacity onPress={handlePrevStory} style={styles.storyLeftZone} activeOpacity={1} />  )}
 
-            {/* --- RIGHT INVISIBLE TAP ZONE --- */}
-            <TouchableOpacity onPress={handleNextStory} style={styles.storyRightZone} activeOpacity={1} />
-
-            <View style={styles.storyModalCardInner} {...storyPanResponder.panHandlers} >
-              {STORY_ITEMS[activeStoryIndex] && (
-                <>
-                  {/* Category */}
-                  <Text style={styles.storyModalCategory}>
-                    {CATEGORIES.find( (c) => c.key === STORY_ITEMS[activeStoryIndex].category)?.label || "İlham"}
-                  </Text>
-
-                  {/* Title */}
-                  <Text style={styles.storyModalTitle}>
-                    {STORY_ITEMS[activeStoryIndex].title}
-                  </Text>
-
-                  {/* Text */}
-                  <ScrollView style={{ marginTop: 8 }} showsVerticalScrollIndicator={false} >
-                    <Text style={styles.storyModalText}>
-                      {STORY_ITEMS[activeStoryIndex].text}
+              {/* --- RIGHT INVISIBLE TAP ZONE --- */}
+              <TouchableOpacity onPress={handleNextStory} style={styles.storyRightZone} activeOpacity={1} />
+              <View style={styles.storyModalCardInner}>
+                {STORY_ITEMS[activeStoryIndex] && (
+                  <>
+                    {/* Category */}
+                    <Text style={styles.storyModalCategory}>
+                      {CATEGORIES.find( (c) => c.key === STORY_ITEMS[activeStoryIndex].category)?.label || "İlham"}
                     </Text>
-                  </ScrollView>
 
-                  <View style={styles.storyModalButtonsRow}>
-                    <TouchableOpacity onPress={toggleLikeCurrentStory} style={styles.storyModalButton} >
-                      <Text style={styles.storyModalButtonText}>
-                        {likedStories[STORY_ITEMS[activeStoryIndex].id] ? "♥ Beğenildi" : "♡ Beğen"}
+                    {/* Title */}
+                    <Text style={styles.storyModalTitle}>
+                      {STORY_ITEMS[activeStoryIndex].title}
+                    </Text>
+
+                    {/* Text */}
+                    <View style={{ marginTop: 8 }} {...storyPanResponder.panHandlers} >
+                      <Text style={styles.storyModalText}>
+                        {STORY_ITEMS[activeStoryIndex].text}
                       </Text>
-                    </TouchableOpacity>
+                    </View>
 
-                    <TouchableOpacity onPress={() => shareText( STORY_ITEMS[activeStoryIndex].text, STORY_ITEMS[activeStoryIndex].title )} style={styles.storyModalButton} >
-                      <Text style={styles.storyModalButtonText}>↗ Paylaş</Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              )}
+                    <View style={styles.storyModalButtonsRow}>
+                      <TouchableOpacity onPress={toggleLikeCurrentStory} style={styles.storyModalButton} >
+                        <Text style={styles.storyModalButtonText}>
+                          {likedStories[STORY_ITEMS[activeStoryIndex].id] ? "♥ Beğenildi" : "♡ Beğen"}
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity onPress={() => shareText( STORY_ITEMS[activeStoryIndex].text, STORY_ITEMS[activeStoryIndex].title )} style={styles.storyModalButton} >
+                        <Text style={styles.storyModalButtonText}>↗ Paylaş</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </View>
             </View>
           </ImageBackground>
         </View>
@@ -1141,7 +1153,6 @@ const styles = StyleSheet.create({
     width: "25%",          // first quarter of the modal
     zIndex: 20,
   },
-
   storyRightZone: {
     position: "absolute",
     right: 0,
