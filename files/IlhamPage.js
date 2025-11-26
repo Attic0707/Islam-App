@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { TouchableOpacity, View, Text, StyleSheet, ScrollView, Modal, Share, ImageBackground, } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, ScrollView, Modal, Share, ImageBackground, TouchableWithoutFeedback, } from "react-native";
 import ScaledText from "./ScaledText";
 
 const STORY_PICS = [
@@ -822,16 +822,24 @@ export default function IlhamPage({ onBack }) {
       {/* STORY MODAL */}
       <Modal visible={storyModalVisible} transparent animationType="fade" onRequestClose={closeStory} >
         <View style={styles.storyModalOverlay}>
-          <ImageBackground source={backgroundSource} style={styles.storyModalCardBackground} imageStyle={styles.storyModalCardImage} resizeMode="cover" > 
+          {/* Invisible full-screen click area for background tap */}
+          <TouchableWithoutFeedback onPress={closeStory}>
+            <View style={StyleSheet.absoluteFill} />
+          </TouchableWithoutFeedback>
+
+          {/* Actual popup card – NOT inside the background touchable */}
+          <ImageBackground source={backgroundSource} style={styles.storyModalCardBackground} imageStyle={styles.storyModalCardImage} resizeMode="cover" >
             <View style={styles.storyModalCardInner}>
               {STORY_ITEMS[activeStoryIndex] && (
                 <>
                   <Text style={styles.storyModalCategory}>
-                    {CATEGORIES.find( (c) => c.key === STORY_ITEMS[activeStoryIndex].category )?.label || "İlham"}
+                    {CATEGORIES.find( (c) => c.key === STORY_ITEMS[activeStoryIndex].category)?.label || "İlham"}
                   </Text>
+
                   <Text style={styles.storyModalTitle}>
                     {STORY_ITEMS[activeStoryIndex].title}
                   </Text>
+
                   <ScrollView style={{ marginTop: 8 }} showsVerticalScrollIndicator={false} >
                     <Text style={styles.storyModalText}>
                       {STORY_ITEMS[activeStoryIndex].text}
@@ -841,25 +849,22 @@ export default function IlhamPage({ onBack }) {
                   <View style={styles.storyModalButtonsRow}>
                     <TouchableOpacity onPress={toggleLikeCurrentStory} style={styles.storyModalButton} >
                       <Text style={styles.storyModalButtonText}>
-                        {likedStories[STORY_ITEMS[activeStoryIndex].id] ? "♥ Beğenildi" : "♡ Beğen"} </Text>
+                        {likedStories[STORY_ITEMS[activeStoryIndex].id] ? "♥ Beğenildi" : "♡ Beğen"}
+                      </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => shareText( STORY_ITEMS[activeStoryIndex].text, STORY_ITEMS[activeStoryIndex].title ) } style={styles.storyModalButton} >
+                    <TouchableOpacity onPress={() => shareText( STORY_ITEMS[activeStoryIndex].text, STORY_ITEMS[activeStoryIndex].title )} style={styles.storyModalButton} >
                       <Text style={styles.storyModalButtonText}>↗ Paylaş</Text>
                     </TouchableOpacity>
                   </View>
 
                   <View style={styles.storyModalFooterNav}>
                     <TouchableOpacity onPress={handlePrevStory} disabled={activeStoryIndex === 0} style={[ styles.storyNavBtn, activeStoryIndex === 0 && styles.storyNavBtnDisabled, ]} >
-                      <Text style={styles.storyNavText}>Önceki</Text>
+                      <Text style={styles.storyNavText}> ← </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={closeStory} style={styles.storyNavBtn}>
-                      <Text style={styles.storyNavText}>Kapat</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={handleNextStory} style={styles.storyNavBtn}  >
-                      <Text style={styles.storyNavText}> {activeStoryIndex === STORY_ITEMS.length - 1 ? "Bitir" : "Sonraki"} </Text>
+                    <TouchableOpacity onPress={handleNextStory} style={styles.storyNavBtn} >
+                      <Text style={styles.storyNavText}> {activeStoryIndex === STORY_ITEMS.length - 1 ? "Bitir" : "→" } </Text>
                     </TouchableOpacity>
                   </View>
                 </>
