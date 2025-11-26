@@ -727,9 +727,17 @@ export default function IlhamPage({ onBack }) {
   const [likedStories, setLikedStories] = useState({}); // {id: true/false}
 
   const backgroundSource = STORY_PICS.length > 0 ? STORY_PICS[activeStoryIndex % STORY_PICS.length] : undefined;
-
   // Feed item modal state
   const [selectedItem, setSelectedItem] = useState(null);
+
+  let feedBackgroundSource = undefined;
+  if (selectedItem && STORY_PICS.length > 0) {
+    const itemIndex = FEED_ITEMS.findIndex(
+      (it) => it.id === selectedItem.id
+    );
+    const safeIndex = itemIndex >= 0 ? itemIndex : 0;
+    feedBackgroundSource = STORY_PICS[safeIndex % STORY_PICS.length];
+  }
 
   const filteredFeed = useMemo(
     () =>
@@ -749,6 +757,10 @@ export default function IlhamPage({ onBack }) {
 
   function closeStory() {
     setStoryModalVisible(false);
+  }
+
+  function closeFeedItem() {
+    setSelectedItem(null);
   }
 
   function handleNextStory() {
@@ -843,7 +855,7 @@ export default function IlhamPage({ onBack }) {
       </ScrollView>
 
       {/* MAIN: Pinterest-style feed */}
-    <FeedGrid filteredFeed={filteredFeed} onItemPress={setSelectedItem}  />
+      <FeedGrid filteredFeed={filteredFeed} onItemPress={setSelectedItem}  />
 
       {/* STORY MODAL */}
       <Modal visible={storyModalVisible} transparent animationType="fade" onRequestClose={closeStory} >
@@ -906,30 +918,32 @@ export default function IlhamPage({ onBack }) {
       {/* FEED ITEM MODAL */}
       <Modal visible={!!selectedItem} transparent animationType="fade" onRequestClose={() => setSelectedItem(null)} >
         <View style={styles.itemModalOverlay}>
-          <View style={styles.itemModalCard}>
-            {selectedItem && (
-              <>
-                <Text style={styles.itemModalType}> {getTypeLabel(selectedItem.type)} </Text>
-                <Text style={styles.itemModalTitle}>{selectedItem.title}</Text>
-                {selectedItem.ref ? ( <Text style={styles.itemModalRef}>{selectedItem.ref}</Text> ) : null}
+          {/* Invisible full-screen click area for background tap */}
+          <TouchableWithoutFeedback onPress={closeFeedItem}>
+            <View style={StyleSheet.absoluteFill} />
+          </TouchableWithoutFeedback>
 
-                <ScrollView style={{ marginTop: 8 }} showsVerticalScrollIndicator={false} >
-                  <Text style={styles.itemModalText}>{selectedItem.text}</Text>
-                </ScrollView>
+          {/* Actual popup card – NOT inside the background touchable */}
+          <ImageBackground source={feedBackgroundSource} style={styles.itemModalCardBackground} imageStyle={styles.itemModalCardImage} resizeMode="cover" >
+            <View style={styles.itemModalCard}>
+              {selectedItem && ( 
+                <> 
+                <Text style={styles.itemModalType}> {getTypeLabel(selectedItem.type)} </Text> 
+                <Text style={styles.itemModalTitle}>{selectedItem.title}</Text> 
+                {selectedItem.ref ? ( <Text style={styles.itemModalRef}>{selectedItem.ref}</Text> ) : null} 
+                <ScrollView style={{ marginTop: 8 }} showsVerticalScrollIndicator={false} > 
+                  <Text style={styles.itemModalText}>{selectedItem.text}</Text> 
+                </ScrollView> 
 
                 <View style={styles.itemModalButtonsRow}>
-                  <TouchableOpacity style={styles.itemModalButton} onPress={() => setSelectedItem(null)} >
-                    <Text style={styles.itemModalButtonText}>Kapat</Text>
-                  </TouchableOpacity>
-
                   <TouchableOpacity style={styles.itemModalButton} onPress={() => shareText( `${selectedItem.title}\n${selectedItem.ref || ""}\n\n${ selectedItem.text }`, "İlham" )  } >
                     <Text style={styles.itemModalButtonText}>↗ Paylaş</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-          </View>
-        </View>
+                  </TouchableOpacity> 
+                </View> 
+              </> )} 
+            </View> 
+          </ImageBackground>
+        </View> 
       </Modal>
     </View>
   );
@@ -1141,9 +1155,11 @@ const styles = StyleSheet.create({
     maxHeight: "80%",
     borderRadius: 20,
     padding: 16,
-    backgroundColor: "rgba(10,10,15,0.96)",
-    borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
+    overflow: "hidden",  
+  },
+  itemModalCardImage: {
+    borderRadius: 20,
   },
   itemModalType: {
     fontSize: 13,
@@ -1182,5 +1198,11 @@ const styles = StyleSheet.create({
   itemModalButtonText: {
     fontSize: 14,
     color: "#ffffff",
+  },
+  itemModalCardBackground: {
+    width: SCREEN_WIDTH * 0.9,
+    height: SCREEN_HEIGHT * 0.55,
+    borderRadius: 20,
+    overflow: "hidden", // must-have!
   },
 });
