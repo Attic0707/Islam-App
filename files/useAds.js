@@ -1,10 +1,6 @@
 // files/useAds.js
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Platform } from "react-native";
-import Constants from "expo-constants";
-
-const IS_EXPO_GO = Constants.appOwnership === "expo";
-const ADS_ENABLED = !IS_EXPO_GO;
 
 let mobileAds = null;
 let InterstitialAd = null;
@@ -13,20 +9,18 @@ let TestIds = null;
 let INTERSTITIAL_AD_UNIT_ID = "";
 let interstitial = null;
 
-if (ADS_ENABLED) {
-  try {
-    const googleMobileAds = require("react-native-google-mobile-ads");
-    mobileAds = googleMobileAds.default;
-    InterstitialAd = googleMobileAds.InterstitialAd;
-    AdEventType = googleMobileAds.AdEventType;
-    TestIds = googleMobileAds.TestIds;
+try {
+  const googleMobileAds = require("react-native-google-mobile-ads");
+  mobileAds = googleMobileAds.default;
+  InterstitialAd = googleMobileAds.InterstitialAd;
+  AdEventType = googleMobileAds.AdEventType;
+  TestIds = googleMobileAds.TestIds;
 
-    INTERSTITIAL_AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : Platform.select({ ios: "ca-app-pub-8919233762784771/2566591222", android: "ca-app-pub-8919233762784771/7773354281", });
+  INTERSTITIAL_AD_UNIT_ID = __DEV__ ? TestIds.INTERSTITIAL : Platform.select({ ios: "ca-app-pub-8919233762784771/2566591222", android: "ca-app-pub-8919233762784771/7773354281", });
 
-    interstitial = InterstitialAd.createForAdRequest( INTERSTITIAL_AD_UNIT_ID, { requestNonPersonalizedAdsOnly: false, } );
-  } catch (e) {
-    console.log("Google Mobile Ads init error:", e);
-  }
+  interstitial = InterstitialAd.createForAdRequest( INTERSTITIAL_AD_UNIT_ID, { requestNonPersonalizedAdsOnly: false, } );
+} catch (e) {
+  console.log("Google Mobile Ads init error:", e);
 }
 
 export function useInterstitialAds(adsEnabled) {
@@ -34,7 +28,7 @@ export function useInterstitialAds(adsEnabled) {
   const lastShownRef = useRef(0);
 
   // ads SDK : no-op hook 
-  if (!ADS_ENABLED || !interstitial || !AdEventType || !mobileAds) {
+  if (!interstitial || !AdEventType || !mobileAds) {
     const noop = useCallback(() => {}, []);
     return { maybeShowInterstitial: noop };
   }

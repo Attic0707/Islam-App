@@ -79,7 +79,7 @@ export default function SettingsPage({ onBack, onSettingsChanged }) {
     try {
       await Share.share({
         message:
-          "İslam Yolu uygulamasını dene. Ezan vakitleri, Kur’an, ilham sayfası ve daha fazlası: APP_STORE_LINK_BURAYA",
+          "İslam Yolu uygulamasını dene. Ezan vakitleri, Kur’an, ilham sayfası ve daha fazlası: https://apps.apple.com/tr/app/islam-yolu/id6755595522",
       });
     } catch (e) {
       console.log("Share error:", e);

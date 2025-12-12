@@ -7,7 +7,6 @@ import TextSizeButton from "./files/TextSizeButton";
 import ScaledText from "./files/ScaledText";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useInterstitialAds } from "./files/useAds";
-import Constants from "expo-constants";
 
 // pages
 import ImsakiyePage from "./files/ImsakiyePage";
@@ -70,9 +69,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const IS_EXPO_GO = Constants.appOwnership === "expo";
-const ADS_ENABLED = !IS_EXPO_GO;
-
 let mobileAds = null;
 let BannerAd = null;
 let BannerAdSize = null;
@@ -82,17 +78,15 @@ let TestIds = null;
 let INTERSTITIAL_AD_UNIT_ID = "";
 let BANNER_AD_UNIT_ID = "";
 
-if (ADS_ENABLED) {
-  const googleMobileAds = require("react-native-google-mobile-ads");
-  mobileAds = googleMobileAds.default;
-  BannerAd = googleMobileAds.BannerAd;
-  BannerAdSize = googleMobileAds.BannerAdSize;
-  InterstitialAd = googleMobileAds.InterstitialAd;
-  AdEventType = googleMobileAds.AdEventType;
-  TestIds = googleMobileAds.TestIds;
+const googleMobileAds = require("react-native-google-mobile-ads");
+mobileAds = googleMobileAds.default;
+BannerAd = googleMobileAds.BannerAd;
+BannerAdSize = googleMobileAds.BannerAdSize;
+InterstitialAd = googleMobileAds.InterstitialAd;
+AdEventType = googleMobileAds.AdEventType;
+TestIds = googleMobileAds.TestIds;
 
-  BANNER_AD_UNIT_ID = __DEV__ ? TestIds.BANNER : Platform.select({ ios: "ca-app-pub-8919233762784771/1697907277", android: "ca-app-pub-8919233762784771/9174081776",});
-}
+BANNER_AD_UNIT_ID = __DEV__ ? TestIds.BANNER : Platform.select({ ios: "ca-app-pub-8919233762784771/1697907277", android: "ca-app-pub-8919233762784771/9174081776",});
 
 const MENU_ITEMS = [
   { key: "imsakiye",            label: "Günlük İmsak ve Vakitler" },
@@ -181,7 +175,7 @@ export default function Islam_App() {
 
   // ads config
   useEffect(() => {
-    if ( !ADS_ENABLED || !mobileAds || !InterstitialAd || !AdEventType || !INTERSTITIAL_AD_UNIT_ID ) {
+    if (!mobileAds || !InterstitialAd || !AdEventType || !INTERSTITIAL_AD_UNIT_ID ) {
       return;
     }
     mobileAds()
@@ -404,7 +398,8 @@ export default function Islam_App() {
   }
 
   function handleMenuItemPress(key) {
-    const bigPages = [ "yasin_suresi", "islam_ilmihali", "peygamberler_tarihi", "dort_halife", "sahabelerin_hayati", "mesnevi", "islam_quiz",  "hadis_fihristi", ];
+    const bigPages = [ "imsakiye", "dini_bayramlar", "takvim_arkasi", "iftarSayaci", "ilham", "namaz", "abdest", "namaz_sureleri", "yasin_suresi", "kaza_takip", "yakin_camiler", "ruyet", 
+      "kirk_hadis", "veda_hutbesi", "otuziki_farz", "esmaul_husna", "islam_ilmihali", "kuran_fihristi", "tecvid", "hadis_fihristi", "secme_ayetler", "guzel_dualar", "salavatlar"];
 
     if (bigPages.includes(key)) {
       maybeShowInterstitial();
@@ -918,7 +913,7 @@ export default function Islam_App() {
       {/* =======================
           BANNER AD
           ======================= */}
-      {activePage === "home" && settings.adsEnabled && ADS_ENABLED && (
+      {activePage === "home" && settings.adsEnabled && (
         <View style={styles.adContainer}>
           <BannerAd
             unitId={BANNER_AD_UNIT_ID}
